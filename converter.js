@@ -25,7 +25,7 @@ async function writeFile(data) {
     await fs.mkdir(__dirname + '/tmp').catch(err => console.error(err))
   }
 
-  fs.writeFile(
+  return await fs.writeFile(
     __dirname + '/tmp/' + outputFilename,
     JSON.stringify(data, null, 2)
   )
@@ -33,7 +33,7 @@ async function writeFile(data) {
 
 async function convertXmlToJson() {
   const xml = await parseXml()
-  writeFile(xml)
+  return writeFile(xml)
 }
 
 convertXmlToJson()

@@ -91,18 +91,18 @@ function formatJsonData(fileName) {
   }
 }
 
-function createFormattedJsonFile() {
+async function createFormattedJsonFile() {
   rimraf(__dirname + '/tmp', async () => {
     try {
-      fs.access(__dirname + '/json')
+      await fs.access(__dirname + '/json')
     } catch (e) {
       await fs.mkdir(__dirname + '/json').catch(err => console.error(err))
     }
-    fs.writeFile(
-      __dirname + `/json/${outputFileName}-${Date.now()}`,
-      JSON.stringify(formatJsonData(inputFileName), null, 2)
-    )
   })
+  return await fs.writeFile(
+    __dirname + `/json/${outputFileName}-${Date.now()}`,
+    JSON.stringify(formatJsonData(inputFileName), null, 2)
+  )
 }
 
 createFormattedJsonFile()
