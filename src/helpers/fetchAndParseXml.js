@@ -1,5 +1,3 @@
-const fs = require('fs').promises
-const util = require('util')
 const xml2js = require('xml2js')
 const axios = require('axios')
 
