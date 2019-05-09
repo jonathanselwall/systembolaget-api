@@ -95,12 +95,16 @@ const createFormattedJsonFile = async (data, output) => {
       .catch(err => console.error(err))
   }
 
-  return fs
+  await fs
     .writeFile(
       process.env.NODE_PATH + `/json/${output}-${Date.now()}`,
       JSON.stringify(formatJsonData(data), null, 2)
     )
     .catch(err => console.error(err))
+
+  return new Promise((resolve, reject) => {
+    resolve(formatJsonData(data))
+  })
 }
 
 module.exports = createFormattedJsonFile

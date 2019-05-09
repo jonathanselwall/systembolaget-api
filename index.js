@@ -9,13 +9,14 @@ const formatJson = require('./src/helpers/formatJson')
 dotenv.config()
 mongoose.Promise = global.Promise
 
-const startSever = () => {
+const startSever = async () => {
   const app = express()
 
-  cron.schedule('* * * * *', async () => {
+  /* cron.schedule('* * * * *', async () => {
     const rawJson = await fetchAndParseXml(process.env.BOLAGET_URL)
-    await formatJson(rawJson, process.env.OUTPUT_FILENAME)
-  })
+    const data = await formatJson(rawJson, process.env.OUTPUT_FILENAME)
+    //! Set up a batch update method for the articles.
+  }) */
 
   app.get('/', (req, res) => {
     res.send('Hello world!')
