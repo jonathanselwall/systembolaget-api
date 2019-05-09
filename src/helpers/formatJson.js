@@ -1,11 +1,7 @@
 const util = require('util')
 const fs = require('fs').promises
-const rimraf = require('rimraf')
 
 util.inspect.defaultOptions.depth = null
-
-const inputFileName = 'systemet.json'
-const outputFileName = 'systemet-formatted.json'
 
 function flattenObjectValues(article) {
   return Object.keys(article).reduce((sum, value) => {
@@ -80,31 +76,32 @@ function formatArticles(article) {
   return formatted
 }
 
-function formatJsonData(fileName) {
-  const data = require(__dirname + '/tmp/' + fileName)
+function formatJsonData(data) {
   const formattedArticles = data.artiklar.artikel
     .map(flattenObjectValues)
     .map(formatArticles)
+
   return {
     createdAt: data.artiklar['skapad-tid'][0],
     articles: formattedArticles,
   }
 }
 
-async function createFormattedJsonFile() {
-  rimraf(__dirname + '/tmp', async () => {
-    try {
-      await fs.access(__dirname + '/json')
-    } catch (e) {
-      await fs.mkdir(__dirname + '/json').catch(err => console.error(err))
-    }
-  })
-  return await fs.writeFile(
-    __dirname + `/json/${outputFileName}-${Date.now()}`,
-    JSON.stringify(formatJsonData(inputFileName), null, 2)
-  )
-}
+async function createFormattedJsonFile(data, output) {
+  try {
+    await fs.access(process.env.NODE_PATH + '/json')
+  } catch (e) {
+    await fs
+      .mkdir(process.env.NODE_PATH + '/json')
+      .catch(err => console.error(err))
+  }
 
-createFormattedJsonFile()
+  return await fs
+    .writeFile(
+      process.env.NODE_PATH + `/json/${output}-${Date.now()}`,
+      JSON.stringify(formatJsonData(data), null, 2)
+    )
+    .catch(err => console.error(err))
+}
 
 module.exports = createFormattedJsonFile
