@@ -1,5 +1,6 @@
 const util = require('util')
-const fs = require('fs');
+const fs = require('fs').promises
+const rimraf = require('rimraf')
 
 util.inspect.defaultOptions.depth = null
 
@@ -80,19 +81,30 @@ function formatArticles(article) {
 }
 
 function formatJsonData(fileName) {
-  const data = require(__dirname + '/' + fileName)
+  const data = require(__dirname + '/tmp/' + fileName)
   const formattedArticles = data.artiklar.artikel
     .map(flattenObjectValues)
     .map(formatArticles)
   return {
     createdAt: data.artiklar['skapad-tid'][0],
-    articles: formattedArticles
+    articles: formattedArticles,
   }
 }
 
-const formattedJson = formatJsonData(inputFileName);
+function createFormattedJsonFile() {
+  rimraf(__dirname + '/tmp', async () => {
+    try {
+      fs.access(__dirname + '/json')
+    } catch (e) {
+      await fs.mkdir(__dirname + '/json').catch(err => console.error(err))
+    }
+    fs.writeFile(
+      __dirname + `/json/${outputFileName}-${Date.now()}`,
+      JSON.stringify(formatJsonData(inputFileName), null, 2)
+    )
+  })
+}
 
-fs.writeFile(__dirname + '/' + outputFileName, JSON.stringify(formattedJson, null, 2), err => {
-  if(err) return console.error('Error writing file', err)
-  console.log(`Successfully wrote ${outputFileName}`)
-})
+createFormattedJsonFile()
+
+module.exports = createFormattedJsonFile

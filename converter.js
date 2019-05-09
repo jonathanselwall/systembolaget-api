@@ -1,26 +1,41 @@
-const fs = require('fs');
-const xml2js = require('xml2js');
-const util = require('util');
+const fs = require('fs').promises
+const util = require('util')
+const xml2js = require('xml2js')
+const axios = require('axios')
 
-util.inspect.defaultOptions.depth = null;
+util.inspect.defaultOptions.depth = null
 
-const parser = new xml2js.Parser();
-const inputFilename = 'systemet.xml'
+const url = 'https://www.systembolaget.se/api/assortment/products/xml'
+const parser = new xml2js.Parser()
 const outputFilename = 'systemet.json'
 
-function convertXmlToJson(inputName, outputName) {
-  return new Promise( (resolve, reject) => {
-    fs.readFile(__dirname + '/' + inputName, (err, data) => {
-      parser.parseString(data, (err, result) => {
-        fs.writeFile(__dirname + '/' + outputName, JSON.stringify(result, null, 2), err => {
-          if(err) return console.error('Error writing file', err)
-          console.log(`Successfully wrote ${outputFilename}`)
-          resolve()
-        })
-      })
+function parseXml() {
+  return new Promise(async (resolve, reject) => {
+    const response = await axios(url).catch(err => console.error(err))
+    parser.parseString(response.data, (err, result) => {
+      resolve(result)
     })
   })
 }
 
-convertXmlToJson(inputFilename, outputFilename);
-    
+async function writeFile(data) {
+  try {
+    await fs.access(__dirname + '/tmp')
+  } catch (e) {
+    await fs.mkdir(__dirname + '/tmp').catch(err => console.error(err))
+  }
+
+  fs.writeFile(
+    __dirname + '/tmp/' + outputFilename,
+    JSON.stringify(data, null, 2)
+  )
+}
+
+async function convertXmlToJson() {
+  const xml = await parseXml()
+  writeFile(xml)
+}
+
+convertXmlToJson()
+
+module.exports = convertXmlToJson
