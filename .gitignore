@@ -1,3 +1,7 @@
 node_modules
 json
 .env
+server/localdev-config.json
+vcap-local.js
+credentials.json
+localdev-config.json

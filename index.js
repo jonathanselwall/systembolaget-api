@@ -21,13 +21,20 @@ const cronJob = async () => {
 }
 
 const startSever = () => {
-  const server = new ApolloServer({ typeDefs, resolvers })
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    playground: true,
+    introspection: true,
+  })
 
   const app = express()
   server.applyMiddleware({ app })
 
-  app.listen({ port: 4000 }, () =>
-    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+  app.listen({ port: process.env.PORT }, () =>
+    console.log(
+      `🚀 Server ready at http://localhost:8080 ${server.graphqlPath}`
+    )
   )
 }
 
