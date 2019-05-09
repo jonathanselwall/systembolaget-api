@@ -13,8 +13,6 @@ cron.schedule('* * * * *', async () => {
   formatJson(rawJson, outputFile)
 })
 
-console.log('test')
-
 app.get('/', (req, res) => {
   res.send('Hello world!')
 })
