@@ -3,15 +3,14 @@ const fs = require('fs').promises
 
 util.inspect.defaultOptions.depth = null
 
-function flattenObjectValues(article) {
-  return Object.keys(article).reduce((sum, value) => {
+const flattenObjectValues = article =>
+  Object.keys(article).reduce((sum, value) => {
     sum[value] =
       article[value].length === 1 ? article[value][0] : article[value]
     return sum
   }, {})
-}
 
-function formatArticles(article) {
+const formatArticles = article => {
   const {
     nr,
     Artikelid,
@@ -76,18 +75,18 @@ function formatArticles(article) {
   return formatted
 }
 
-function formatJsonData(data) {
-  const formattedArticles = data.artiklar.artikel
+const formatJsonData = data => {
+  const createdAt = data.artiklar['skapad-tid'][0]
+  const articles = data.artiklar.artikel
     .map(flattenObjectValues)
     .map(formatArticles)
-
   return {
-    createdAt: data.artiklar['skapad-tid'][0],
-    articles: formattedArticles,
+    createdAt,
+    articles,
   }
 }
 
-async function createFormattedJsonFile(data, output) {
+const createFormattedJsonFile = async (data, output) => {
   try {
     await fs.access(process.env.NODE_PATH + '/json')
   } catch (e) {

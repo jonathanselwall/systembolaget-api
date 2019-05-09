@@ -1,7 +1,7 @@
 const xml2js = require('xml2js')
 const axios = require('axios')
 
-function fetchAndparseXml(url) {
+const fetchAndParseXml = url => {
   const parser = new xml2js.Parser()
   return new Promise(async (resolve, reject) => {
     const response = await axios(url).catch(err => console.error(err))
@@ -11,4 +11,4 @@ function fetchAndparseXml(url) {
   })
 }
 
-module.exports = fetchAndparseXml
+module.exports = fetchAndParseXml
