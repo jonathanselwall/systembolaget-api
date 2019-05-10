@@ -33,8 +33,13 @@ const typeDefs = gql`
   }
 
   type Query {
-    article(id: String!): Article
-    allArticles(page: Int!, perPage: Int!): [Article]
+    article(id: String!): Article,
+    allArticles(page: Int!, perPage: Int!): {
+      articles: [Article],
+      page: Int!,
+      totalPages: Int!,
+      totalArticles: Int!
+    }
   }
 `
 

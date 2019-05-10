@@ -13,9 +13,17 @@ const resolvers = {
       }
     },
     allArticles: async (parent, { page, perPage }, context, info) => {
-      return await ArticleModel.find()
+      const totalPages = await ArticleModel.count((err, count) => count)
+      const articles = await ArticleModel.find()
         .limit(perPage)
         .skip(perPage * page)
+
+      return {
+        articles,
+        page,
+        totalPages,
+        totalArticles: totalPages * perPage,
+      }
     },
   },
 }
