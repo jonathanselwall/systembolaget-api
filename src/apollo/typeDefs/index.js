@@ -32,14 +32,16 @@ const typeDefs = gql`
     rawMaterials: String
   }
 
+  type Articles {
+    articles: [Article]
+    page: Int
+    totalPages: Int
+    totalArticles: Int
+  }
+
   type Query {
-    article(id: String!): Article,
-    allArticles(page: Int!, perPage: Int!): {
-      articles: [Article],
-      page: Int!,
-      totalPages: Int!,
-      totalArticles: Int!
-    }
+    article(id: String!): Article
+    allArticles(perPage: Int!, page: Int!): Articles
   }
 `
 
