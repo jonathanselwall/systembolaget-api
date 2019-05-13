@@ -1,8 +1,9 @@
 const express = require('express')
-const { ApolloServer } = require('apollo-server-express')
+const { ApolloServer, AuthenticationError } = require('apollo-server-express')
 const dotenv = require('dotenv')
 const cron = require('node-cron')
 const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken')
 
 const typeDefs = require('./src/apollo/typeDefs')
 const resolvers = require('./src/apollo/resolvers')
@@ -26,6 +27,17 @@ const startSever = () => {
     resolvers,
     playground: true,
     introspection: true,
+    context: async ({ req }) => {
+      const token = req.headers.authentication || null
+      if (!token) throw new AuthenticationError('Wrong auth token.')
+
+      try {
+        await jwt.verify(token, process.env.TOKEN_SECRET)
+        return { loggedIn: true }
+      } catch (err) {
+        throw new AuthenticationError('You are not logged in.')
+      }
+    },
   })
 
   const app = express()
