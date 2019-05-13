@@ -21,23 +21,26 @@ const cronJob = async () => {
   })
 }
 
+const setAuth = async ({ req }) => {
+  const token = req.headers.authentication || ''
+  try {
+    await jwt.verify(token, process.env.TOKEN_SECRET)
+    return true
+  } catch (err) {
+    console.error(err)
+    return false
+  }
+}
+
 const startSever = () => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
     playground: true,
     introspection: true,
-    context: async ({ req }) => {
-      const token = req.headers.authentication || null
-      if (!token) throw new AuthenticationError('Wrong auth token.')
-
-      try {
-        await jwt.verify(token, process.env.TOKEN_SECRET)
-        return { loggedIn: true }
-      } catch (err) {
-        throw new AuthenticationError('You are not logged in.')
-      }
-    },
+    context: async ctx => ({
+      auth: await setAuth(ctx),
+    }),
   })
 
   const app = express()

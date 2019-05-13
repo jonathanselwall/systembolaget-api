@@ -5,10 +5,10 @@ const jwt = require('jsonwebtoken')
 const ArticleModel = require('../../mongo/schemas/articleSchema')
 const UserModel = require('../../mongo/schemas/userSchema')
 
-const checkAuth = ({ loggedIn }) => {
-  if (!loggedIn) {
-    throw new AuthenticationError('You are not logged in.')
-  }
+const checkAuth = ({ auth }) => {
+  console.log('------------')
+  console.log(auth)
+  if (!auth) throw new AuthenticationError('You are not logged in.')
 }
 
 const resolvers = {
